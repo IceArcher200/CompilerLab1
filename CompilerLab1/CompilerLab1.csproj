@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\copyButton.png" />
+    <None Remove="Images\createButton.jpg" />
+    <None Remove="Images\cutButton.jpg" />
+    <None Remove="Images\openButton.png" />
+    <None Remove="Images\pasteButton.png" />
+    <None Remove="Images\redoButton.png" />
+    <None Remove="Images\saveButton.png" />
+    <None Remove="Images\undoButton.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\copyButton.png" />
+    <Resource Include="Images\createButton.jpg" />
+    <Resource Include="Images\cutButton.jpg" />
+    <Resource Include="Images\openButton.png" />
+    <Resource Include="Images\pasteButton.png" />
+    <Resource Include="Images\redoButton.png" />
+    <Resource Include="Images\saveButton.png" />
+    <Resource Include="Images\undoButton.png" />
+  </ItemGroup>
+
+</Project>
