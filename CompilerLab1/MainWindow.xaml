@@ -6,23 +6,24 @@
         xmlns:local="clr-namespace:CompilerLab1"
         mc:Ignorable="d"
         Title="GUI для ЯП" Height="450" Width="900"
-        ResizeMode="NoResize">
-    <Grid ShowGridLines="False">
+        Closing="Window_Closing"
+        AllowDrop="True" Drop="File_Drop">
+
+    
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
-            <RowDefinition Height="50*"></RowDefinition>
+            <RowDefinition Height="50*" ></RowDefinition>
             <RowDefinition Height="50*"></RowDefinition>
         </Grid.RowDefinitions>
 
-            
-        
         <Menu x:Name = "menu" VerticalAlignment="Top" Grid.Row="0" >
             <MenuItem Header="Файл">
                 <MenuItem Header="Создать" Click="Create_Click"></MenuItem>
                 <MenuItem Header="Открыть" Click="Open_Click"></MenuItem>
                 <MenuItem Header="Сохранить" Click="Save_Click"></MenuItem>
-                <MenuItem Header="Сохранить как" Click="SaveHow_Click"></MenuItem>
+                <MenuItem Header="Сохранить как" Click="SaveAs_Click"></MenuItem>
                 <MenuItem Header="Выход" Click="Exit_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="Правка">
@@ -50,48 +51,66 @@
                 <MenuItem Header="О программе" Click="About_Click"></MenuItem>
             </MenuItem>
         </Menu>
-        <Button x:Name ="CreateButton" Click="Create_Click"  Width="30" Height="30"  Grid.Row ="1" Margin ="25,10,745,10">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="Images/createButton.jpg" Width="30" Height="30"></Image>
-            </StackPanel>
-        </Button>
-        <Button x:Name ="OpenButton" Click="Open_Click" Width="30" Height="30"  Grid.Row ="1" Margin ="65,10,705,10">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="Images/openButton.png" Width="30" Height="30"></Image>
-            </StackPanel>
-        </Button>
-        <Button x:Name ="SaveButton" Click="Save_Click" Width="30" Height="30"  Grid.Row ="1" Margin ="106,10,664,10">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="Images/saveButton.png" Width="30" Height="30"></Image>
-            </StackPanel>
-        </Button>
-        <Button x:Name ="UndoButton" Click="Undo_Click" Width="30" Height="30"  Grid.Row ="1" Margin ="190,10,580,10">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="Images/undoButton.png" Width="30" Height="30"></Image>
-            </StackPanel>
-        </Button>
-        <Button x:Name ="RedoButton" Click="Redo_Click" Width="30" Height="30"  Grid.Row ="1" Margin ="230,10,540,10">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="Images/redoButton.png" Width="30" Height="30"></Image>
-            </StackPanel>
-        </Button>
-        <Button x:Name ="CopyButton" Click="Copy_Click" Width="30" Height="30"  Grid.Row ="1" Margin ="271,10,499,10">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="Images/copyButton.png" Width="30" Height="30"></Image>
-            </StackPanel>
-        </Button>
-        <Button x:Name ="CutButton" Click="Cut_Click" Width="30" Height="30"  Grid.Row ="1" Margin ="315,10,455,10">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="Images/cutButton.jpg" Width="30" Height="30"></Image>
-            </StackPanel>
-        </Button>
-        <Button x:Name ="PasteButton" Click="Paste_Click" Width="30" Height="30"  Grid.Row ="1" Margin ="356,10,414,10">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="Images/pasteButton.png" Width="30" Height="30"></Image>
-            </StackPanel>
-        </Button>
-        <RichTextBox x:Name="InputBox"  TextChanged="TextChanged" Grid.Row="2" Background="AliceBlue" Margin="25,10,25,10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"> </RichTextBox>
-        <RichTextBox x:Name ="ResultBox"  Grid.Row="3" Background="AliceBlue" Margin="25,10,25,10" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"> </RichTextBox>
-        <GridSplitter Grid.Row="2" Height="1" Background="Gray" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" ></GridSplitter> 
+        <ToolBar Grid.Row="1">
+            <Button x:Name ="CreateButton" Click="Create_Click" ToolTip="Создать">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Images/createButton.jpg" Width="30" Height="30"></Image>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button x:Name ="OpenButton" Click="Open_Click" ToolTip="Открыть">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Images/openButton.png" Width="30" Height="30"></Image>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button x:Name ="SaveButton" Click="Save_Click" ToolTip="Сохранить">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Images/saveButton.png" Width="30" Height="30"></Image>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button x:Name ="UndoButton" Click="Undo_Click" ToolTip="Отменить">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Images/undoButton.png" Width="30" Height="30"></Image>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button x:Name ="RedoButton" Click="Redo_Click" ToolTip="Повторить">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Images/redoButton.png" Width="30" Height="30"></Image>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button x:Name ="CopyButton" Click="Copy_Click" ToolTip="Скопировать">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Images/copyButton.png" Width="30" Height="30"></Image>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button x:Name ="CutButton" Click="Cut_Click" ToolTip="Вырезать">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Images/cutButton.jpg" Width="30" Height="30"></Image>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button x:Name ="PasteButton" Click="Paste_Click" ToolTip="Вставить">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Images/pasteButton.png" Width="30" Height="30"></Image>
+                </StackPanel>
+            </Button>
+            <Button x:Name ="RunButton" Click="Run_Click" ToolTip="RUN">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Images/pasteButton.png" Width="30" Height="30"></Image>
+                </StackPanel>
+            </Button>
+        </ToolBar>
+        <TabControl x:Name="tabs" Grid.Row="2" SelectedItem="TabControl_SelectedItem"></TabControl>
+        <DataGrid x:Name="ResultTable" Grid.Row="3">
+        </DataGrid>
+        <GridSplitter Grid.Row="2" Height="1" Background="Gray" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" ></GridSplitter>
+
     </Grid>
+
 </Window>
+

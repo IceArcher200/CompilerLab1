@@ -20,9 +20,11 @@ namespace CompilerLab1
     public partial class Save : Window
     {
         public event Action<bool> NeedSave;
+        public string fileName { get; set; }
         public Save()
         {
             InitializeComponent();
+            textBox.Text = "Желаете сохранить изменения в " + fileName;
         }
         private void Yes_Click(object sender, RoutedEventArgs e)
         {
