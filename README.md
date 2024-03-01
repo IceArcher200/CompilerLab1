@@ -42,6 +42,9 @@ Token: { Type: "CLOSE_BRACE", Value: "}", Position: { Index: "38", Line: "1", Co
 
 Token: { Type: "END_MASSIVE", Value: ";", Position: { Index: "39", Line: "1", Column: "39" } }
 
+<img width="537" alt="Документ (1)" src="https://github.com/IceArcher200/CompilerLab1/assets/82698823/307965db-17fb-40b7-8637-0ca98164eb9b">
+
+
 
 
 
