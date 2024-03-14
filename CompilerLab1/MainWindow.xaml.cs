@@ -74,7 +74,7 @@ namespace CompilerLab1
             RichTextBox inputBox = listTabs[tabs.SelectedIndex].InputBox;
             TextRange doc = new TextRange(inputBox.Document.ContentStart, inputBox.Document.ContentEnd);
             using FileStream fs = new FileStream(currentFilePath, FileMode.Open);
-                doc.Save(fs, DataFormats.Text);
+            doc.Save(fs, DataFormats.Text);
             listTabs[tabs.SelectedIndex].TextChanged = false;
         }
         private void SaveAs_Click(object sender, RoutedEventArgs e)
@@ -168,7 +168,7 @@ namespace CompilerLab1
         }
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            for(int i = 0; i < tabs.Items.Count; i++)
+            for (int i = 0; i < tabs.Items.Count; i++)
             {
                 string fileName = Path.GetFileName(listTabs[tabs.SelectedIndex].FilePath);
                 tabs.SelectedIndex = i;
@@ -198,18 +198,20 @@ namespace CompilerLab1
         private void Run_Click(object sender, RoutedEventArgs e)
         {
             var lexer = new Lexer();
-            lexer.AddDefinition(new TokenDefinition("keyword", new Regex(@"let", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("KEYWORD", new Regex(@"let", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("IDENTIFIER", new Regex(@"[a-z]+[a-z0-9_]*", RegexOptions.Compiled | RegexOptions.IgnoreCase)));
-            lexer.AddDefinition(new TokenDefinition("SEPARATOR", new Regex(@" ", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("ASSIGNMENT", new Regex(@"=", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("OPEN_BRACE", new Regex(@"{", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("CLOSE_BRACE", new Regex(@"}", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("LINE", new Regex(@"""[^""\\]*(?:\\.[^""\\]*)*""", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("COMMA", new Regex(@",", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("Colon", new Regex(@":", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("COLON", new Regex(@":", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("COMPLEX_NUMBER", new Regex(@"\d+(\.\d+)", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("NEGATIVE_NUMBER", new Regex(@"-\d+", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("NUMBER", new Regex(@"\d+", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("END_MASSIVE", new Regex(@";", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("LINE_BREAK", new Regex(@"\r?\n", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("SEPARATOR", new Regex(@" ", RegexOptions.Compiled), true));
+            lexer.AddDefinition(new TokenDefinition("LINE_BREAK", new Regex(@"\r?\n", RegexOptions.Compiled), true));
 
             RichTextBox input = listTabs[tabs.SelectedIndex].InputBox;
             TextRange doc = new TextRange(input.Document.ContentStart, input.Document.ContentEnd);
@@ -222,24 +224,23 @@ namespace CompilerLab1
                 UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
             };
 
+            ResultBox.Clear();
+            Parser parser = new Parser();
             foreach (Token token in tokens)
             {
+                if (parser.Parse(token) == States.ERROR)
+                    ResultBox.Text += "Ошибка " + token.ToString() + "\n";
                 //MessageBox.Show(token.ToString());
             }
-            ResultTable.Columns.Add(new DataGridTextColumn { Header = "Type", Binding = typeBinding});
-            ResultTable.Columns.Add(new DataGridTextColumn { Header = "Value" });
-            ResultTable.Columns.Add(new DataGridTextColumn { Header = "Index" });
-            ResultTable.Columns.Add(new DataGridTextColumn { Header = "Line" });
-            ResultTable.Columns.Add(new DataGridTextColumn { Header = "Column" });
         }
 
 
         private TextRange Create_New_Tab(string filePath)
         {
             Grid grid = new Grid();
-            
+
             RichTextBox input = new RichTextBox();
-            input.Margin = new Thickness(30,10,10,10);
+            input.Margin = new Thickness(30, 10, 10, 10);
             input.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             Paragraph p = input.Document.Blocks.FirstBlock as Paragraph;
             p.LineHeight = 1;
@@ -271,7 +272,7 @@ namespace CompilerLab1
             tab.Focus();
             tabsCount++;
             return doc;
-            
+
         }
 
         private void TabControl_SelectedItem(object sender, SelectionChangedEventArgs e)

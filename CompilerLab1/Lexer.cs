@@ -34,6 +34,7 @@ namespace CompilerLab1
             var currentIndex = 0;
             var currentLine = 1;
             var currentColumn = 0;
+            string? s = string.Empty;
 
             while (currentIndex < source.Length)
             {
@@ -52,14 +53,21 @@ namespace CompilerLab1
                     }
                 }
 
-                if (definition == null)
-                    throw new UnrecognizedSymbolException(source[currentIndex], new TokenPosition(currentIndex, currentLine, currentColumn));
 
                 var value = source.Substring(currentIndex, length);
 
-                if (!definition.Ignore)
-                    result.Add(new Token(definition.Type, value, new TokenPosition(currentIndex, currentLine, currentColumn)));
-
+                if (definition == null)
+                {
+                    s = "";
+                    s += source[currentIndex];
+                    length = 1;
+                    result.Add(new Token("ERROR", s, new TokenPosition(currentIndex, currentIndex + (length - 1), currentColumn)));
+                }
+                else
+                {
+                    if (!definition.Ignore)
+                        result.Add(new Token(definition.Type, value, new TokenPosition(currentIndex, currentIndex + (length - 1), currentColumn)));
+                }
                 var eolMatch = _endOfLineRegex.Match(value);
                 if (eolMatch.Success)
                 {
@@ -72,10 +80,8 @@ namespace CompilerLab1
                 }
 
                 currentIndex += length;
+
             }
-
-            result.Add(new Token("EOF", "", new TokenPosition(currentIndex, currentLine, currentColumn)));
-
             return result;
         }
     }

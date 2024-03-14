@@ -13,9 +13,7 @@ namespace CompilerLab1
         public Regex Regex { get; private set; }
         public bool Ignore { get; private set; }
         public TokenDefinition(string type, Regex regex)
-            : this(type, regex, false)
-        {
-        }
+            : this(type, regex, false){}
         public TokenDefinition(string type, Regex regex, bool ignore)
         {
             this.Type = type;

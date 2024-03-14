@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace CompilerLab1
 {
-    
+
     internal class Token
     {
-		public TokenPosition Position { get; set; }
+        public TokenPosition Position { get; set; }
         public string Type { get; set; }
         public string Value { get; set; }
         public Token(string type, string value, TokenPosition position)
@@ -21,7 +21,7 @@ namespace CompilerLab1
         public override string ToString()
         {
             var value = this.Value.Replace("\r", "\\r").Replace("\n", "\\n");
-            return string.Format("Token: {{ Type: \"{0}\", Value: \"{1}\", Position: {{ Index: \"{2}\", Line: \"{3}\", Column: \"{4}\" }} }}", this.Type, value, this.Position.Index, this.Position.Line, this.Position.Column);
+            return string.Format("Token: {{ Type: \"{0}\", Value: \"{1}\", Position: {{ StartIndex: \"{2}\", EndIndex: \"{3}\" }} }}", this.Type, value, this.Position.Index, this.Position.Line, this.Position.Column);
         }
 
     }

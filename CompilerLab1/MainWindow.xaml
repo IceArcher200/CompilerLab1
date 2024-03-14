@@ -106,8 +106,7 @@
             </Button>
         </ToolBar>
         <TabControl x:Name="tabs" Grid.Row="2" SelectedItem="TabControl_SelectedItem"></TabControl>
-        <DataGrid x:Name="ResultTable" Grid.Row="3">
-        </DataGrid>
+        <TextBox x:Name="ResultBox" Grid.Row="3"></TextBox>
         <GridSplitter Grid.Row="2" Height="1" Background="Gray" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" ></GridSplitter>
 
     </Grid>
