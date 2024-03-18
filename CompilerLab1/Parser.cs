@@ -28,6 +28,29 @@ namespace CompilerLab1
             currentState = States.START;
         }
 
+        public string getToken(States state)
+        {
+            if (state == States.START)
+                return "let";
+            if (state == States.LET)
+                return "arr";
+            if (state == States.ARR)
+                return "=";
+            if (state == States.ASSIGNMENT)
+                return "{";
+            if (state == States.OPEN)
+                return "key";
+            if (state == States.STRING)
+                return ":";
+            if (state == States.COLON)
+                return "value";
+            if (state == States.STRING2)
+                return "}";
+            if (state == States.END)
+                return ";";
+            return "";
+        }
+
         public States Parse(Token token, bool isStateChangeable)
         {
             string type = token.Type;
@@ -106,8 +129,6 @@ namespace CompilerLab1
                         currentState = States.START;
                 return States.START;
             }
-                if (isStateChangeable)
-                    currentState = States.ERROR;
             return States.ERROR;
         }
     }

@@ -229,35 +229,93 @@ namespace CompilerLab1
             Parser parser = new Parser();
             for (int i = 0;i < tokens.Count;i++)
             {
-                if (i == tokens.Count-1)
+                bool isContains = false;
+                bool flag = false;
+                for(int j = i; j < tokens.Count;j++)
+                {
+                    if (parser.Parse(tokens[j], false) != States.ERROR)
+                    {
+                        isContains = true;
+                    }
+                }
+                if (!isContains)
+                {
+                    flag = false;
+                    States tempState = parser.currentState;
+                    States temp2State;
+                    while(parser.currentState != States.ERROR && flag == false)
+                    {
+                        if (parser.Parse(tokens[i],false) != States.ERROR) // Найден символ продолжение
+                        {
+                            while(tempState != parser.currentState)
+                            {
+                                ResultBox.Text += "Ожидалось '" + parser.getToken(tempState) + "' перед " + tokens[i] + "\n";
+                                tempState++;
+                            }
+                            parser.Parse(tokens[i], true);
+                            flag = true;
+                            if (i == tokens.Count - 1)
+                            {
+                                temp2State = parser.currentState;
+                                while ((temp2State != States.ERROR) && parser.currentState != States.START)
+                                {
+                                    ResultBox.Text += "Ожидалось '" + parser.getToken(temp2State) + "' после " + tokens[i] + "\n";
+                                    temp2State++;
+                                }
+                                tempState = States.START;
+                            }
+                        }
+                        if (!flag) 
+                            parser.currentState++;
+                    }
+                    if (!flag)
+                    {
+                        parser.currentState = tempState;
+                        if (i == tokens.Count - 1)
+                        {
+                            if (parser.Parse(tokens[i], true) == States.ERROR)
+                                ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
+                            while ((parser.currentState != States.ERROR) && parser.currentState != States.START)
+                            {
+                                ResultBox.Text += "Ожидалось '" + parser.getToken(parser.currentState) + "' после " + tokens[i] + "\n";
+                                parser.currentState++;
+                            }
+                            parser.currentState = States.START;
+                        }
+                        else if (parser.Parse(tokens[i], false) == States.ERROR)
+                        {
+                            ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
+                        }
+                        else
+                        {
+                            parser.Parse(tokens[i], true);
+                        }
+                    }
+                }
+                else if (i == tokens.Count - 1)
                 {
                     if (parser.Parse(tokens[i], true) == States.ERROR)
                         ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
+                    while ((parser.currentState != States.ERROR) && parser.currentState != States.START)
+                    {
+                        ResultBox.Text += "Ожидалось '" + parser.getToken(parser.currentState) + "' после " + tokens[i] + "\n";
+                        parser.currentState++;
+                    }
+                    parser.currentState = States.START;
                 }
-                else if (parser.Parse(tokens[i],false) == States.ERROR)
-                {
-                    parser.currentState++;
-                    if (parser.Parse(tokens[i], false) != States.ERROR)
-                    {
-                        States states = parser.currentState;
-                        ResultBox.Text += "Пропущено " + states + " перед " + tokens[i] + "\n";
-                        parser.Parse(tokens[i], true);
-                    }
-                    else
-                    {
-                        parser.currentState--;
-                        ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
-                    }
+                else if (parser.Parse(tokens[i], false) == States.ERROR)
+                {  
+                    ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
                 }
                 else
                 {
                     parser.Parse(tokens[i], true);
                 }
+
             }
             if (ResultBox.Text == "")
                 ResultBox.Text += "No Errors";
         }
-
 
         private TextRange Create_New_Tab(string filePath)
         {
