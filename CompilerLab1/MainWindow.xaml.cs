@@ -197,6 +197,7 @@ namespace CompilerLab1
 
         private void Run_Click(object sender, RoutedEventArgs e)
         {
+            bool first = true;
             var lexer = new Lexer();
             lexer.AddDefinition(new TokenDefinition("KEYWORD", new Regex(@"let", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("IDENTIFIER", new Regex(@"[a-z]+[a-z0-9_]*", RegexOptions.Compiled | RegexOptions.IgnoreCase)));
@@ -226,12 +227,35 @@ namespace CompilerLab1
 
             ResultBox.Clear();
             Parser parser = new Parser();
-            foreach (Token token in tokens)
+            for (int i = 0;i < tokens.Count;i++)
             {
-                if (parser.Parse(token) == States.ERROR)
-                    ResultBox.Text += "Ошибка " + token.ToString() + "\n";
-                //MessageBox.Show(token.ToString());
+                if (i == tokens.Count-1)
+                {
+                    if (parser.Parse(tokens[i], true) == States.ERROR)
+                        ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
+                }
+                else if (parser.Parse(tokens[i],false) == States.ERROR)
+                {
+                    parser.currentState++;
+                    if (parser.Parse(tokens[i], false) != States.ERROR)
+                    {
+                        States states = parser.currentState;
+                        ResultBox.Text += "Пропущено " + states + " перед " + tokens[i] + "\n";
+                        parser.Parse(tokens[i], true);
+                    }
+                    else
+                    {
+                        parser.currentState--;
+                        ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
+                    }
+                }
+                else
+                {
+                    parser.Parse(tokens[i], true);
+                }
             }
+            if (ResultBox.Text == "")
+                ResultBox.Text += "No Errors";
         }
 
 

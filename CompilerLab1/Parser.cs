@@ -22,13 +22,13 @@ namespace CompilerLab1
     };
     internal class Parser
     {
-        States currentState;
+        public States currentState;
         public Parser()
         {
             currentState = States.START;
         }
 
-        public States Parse(Token token)
+        public States Parse(Token token, bool isStateChangeable)
         {
             string type = token.Type;
             if (type == "SEPARATOR")
@@ -38,66 +38,76 @@ namespace CompilerLab1
 
             if (currentState == States.START && type == "KEYWORD")
             {
-                currentState = States.LET;
+                if (isStateChangeable)
+                    currentState = States.LET;
                 return States.LET;
             }
 
             if (currentState == States.LET && type == "IDENTIFIER")
             {
-                currentState = States.ARR;
+                if (isStateChangeable)
+                    currentState = States.ARR;
                 return States.ARR;
 
             }
 
             if (currentState == States.ARR && type == "ASSIGNMENT")
             {
-                currentState = States.ASSIGNMENT;
+                if (isStateChangeable)
+                    currentState = States.ASSIGNMENT;
                 return States.ASSIGNMENT;
             }
 
             if (currentState == States.ASSIGNMENT && type == "OPEN_BRACE")
             {
-                currentState = States.OPEN;
+                if (isStateChangeable)
+                    currentState = States.OPEN;
                 return States.OPEN;
             }
 
             if (currentState == States.OPEN && type == "LINE")
             {
-                currentState = States.STRING;
+                if (isStateChangeable)
+                    currentState = States.STRING;
                 return States.STRING;
             }
 
             if (currentState == States.STRING && type == "COLON")
             {
-                currentState = States.COLON;
+                if (isStateChangeable)
+                    currentState = States.COLON;
                 return States.COLON;
             }
 
             if (currentState == States.COLON && (type == "COMPLEX_NUMBER" || type == "NEGATIVE_NUMBER" || type == "NUMBER" || type == "LINE"))
             {
-                currentState = States.STRING2;
+                if (isStateChangeable)
+                    currentState = States.STRING2;
                 return States.STRING2;
             }
 
             if (currentState == States.STRING2 && type == "COMMA")
             {
-                currentState = States.OPEN;
+                if (isStateChangeable)
+                    currentState = States.OPEN;
                 return States.OPEN;
             }
 
-
             if (currentState == States.STRING2 && type == "CLOSE_BRACE")
             {
-                currentState = States.END;
-                return States.END;
+                if (isStateChangeable)
+                    currentState = States.END;
+                    return States.END;
             }
 
             if (currentState == States.END && type == "END_MASSIVE")
             {
-                currentState = States.START;
+                    if (isStateChangeable)
+                        currentState = States.START;
                 return States.START;
             }
-            currentState = States.ERROR;
+                if (isStateChangeable)
+                    currentState = States.ERROR;
             return States.ERROR;
         }
     }

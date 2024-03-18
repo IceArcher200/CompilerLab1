@@ -21,7 +21,7 @@ namespace CompilerLab1
         public override string ToString()
         {
             var value = this.Value.Replace("\r", "\\r").Replace("\n", "\\n");
-            return string.Format("Token: {{ Type: \"{0}\", Value: \"{1}\", Position: {{ StartIndex: \"{2}\", EndIndex: \"{3}\" }} }}", this.Type, value, this.Position.Index, this.Position.Line, this.Position.Column);
+            return string.Format("Token: {{ Type: \"{0}\", Value: \"{1}\", Position: {{ StartIndex: \"{2}\", EndIndex: \"{3}\" }} }}", this.Type, value, this.Position.Index, this.Position.Index + this.Value.Length);
         }
 
     }
