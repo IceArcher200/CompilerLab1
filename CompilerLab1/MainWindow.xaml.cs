@@ -224,7 +224,7 @@ namespace CompilerLab1
                 Mode = BindingMode.Default,
                 UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
             };
-
+            string resultString = "";
             ResultBox.Clear();
             Parser parser = new Parser();
             for (int i = 0;i < tokens.Count;i++)
@@ -250,8 +250,10 @@ namespace CompilerLab1
                             while(tempState != parser.currentState)
                             {
                                 ResultBox.Text += "Ожидалось '" + parser.getToken(tempState) + "' перед " + tokens[i] + "\n";
+                                resultString += parser.getToken(tempState) + " ";
                                 tempState++;
                             }
+                            resultString += tokens[i].Value + " ";
                             parser.Parse(tokens[i], true);
                             flag = true;
                             if (i == tokens.Count - 1)
@@ -260,6 +262,7 @@ namespace CompilerLab1
                                 while ((temp2State != States.ERROR) && parser.currentState != States.START)
                                 {
                                     ResultBox.Text += "Ожидалось '" + parser.getToken(temp2State) + "' после " + tokens[i] + "\n";
+                                    resultString += parser.getToken(temp2State) + " ";
                                     temp2State++;
                                 }
                                 tempState = States.START;
@@ -278,6 +281,7 @@ namespace CompilerLab1
                             while ((parser.currentState != States.ERROR) && parser.currentState != States.START)
                             {
                                 ResultBox.Text += "Ожидалось '" + parser.getToken(parser.currentState) + "' после " + tokens[i] + "\n";
+                                resultString += parser.getToken(parser.currentState) + " ";
                                 parser.currentState++;
                             }
                             parser.currentState = States.START;
@@ -288,19 +292,23 @@ namespace CompilerLab1
                         }
                         else
                         {
+                            resultString += tokens[i].Value + " ";
                             parser.Parse(tokens[i], true);
                         }
                     }
                 }
                 else if (i == tokens.Count - 1)
                 {
+                    resultString += parser.getToken(parser.currentState) + " ";
                     if (parser.Parse(tokens[i], true) == States.ERROR)
                         ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
                     while ((parser.currentState != States.ERROR) && parser.currentState != States.START)
                     {
                         ResultBox.Text += "Ожидалось '" + parser.getToken(parser.currentState) + "' после " + tokens[i] + "\n";
+                        resultString += parser.getToken(parser.currentState) + " ";
                         parser.currentState++;
                     }
+                    
                     parser.currentState = States.START;
                 }
                 else if (parser.Parse(tokens[i], false) == States.ERROR)
@@ -309,12 +317,14 @@ namespace CompilerLab1
                 }
                 else
                 {
+                    resultString += tokens[i].Value + " ";
                     parser.Parse(tokens[i], true);
                 }
 
             }
             if (ResultBox.Text == "")
                 ResultBox.Text += "No Errors";
+            ResultBox.Text += "\n Исправленная строка: \n" + resultString;
         }
 
         private TextRange Create_New_Tab(string filePath)
