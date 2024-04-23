@@ -255,7 +255,7 @@ namespace CompilerLab1
         private void Source_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"https://github.com/IceArcher200/CompilerLab1")
+            p.StartInfo = new ProcessStartInfo(@"https://github.com/IceArcher200/CompilerLab1/tree/Coursework")
             {
                 UseShellExecute = true
             };
