@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Enumeration;
 using System.Linq;
@@ -158,14 +159,111 @@ namespace CompilerLab1
         }
         private void Help_Click(object sender, RoutedEventArgs e)
         {
-            Help help = new Help();
-            help.Owner = this;
-            help.ShowDialog();
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\Help.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
         }
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("На данный момент данная программа является GUI для будущего языкового редактора");
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\About.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
         }
+
+        private void Classification_Click(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\Classification.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+
+        private void Grammar_Click(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\Grammar.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+
+        private void Literature_Click(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\LiteratureList.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+
+        private void Irons_Click(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\Irons.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+
+        private void Analysis_Click(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\Analysis.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+        private void Task_Click(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\Task.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+        private void Examples_Click(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\Examples.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+        private void Source_Click(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"https://github.com/IceArcher200/CompilerLab1")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+
+
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             for (int i = 0; i < tabs.Items.Count; i++)
@@ -323,8 +421,8 @@ namespace CompilerLab1
 
             }
             if (ResultBox.Text == "")
-                ResultBox.Text += "No Errors";
-            ResultBox.Text += "\n Исправленная строка: \n" + resultString;
+                ResultBox.Text += "Ошибок не обнаружено";
+            //ResultBox.Text += "\n Исправленная строка: \n" + resultString;
         }
 
         private TextRange Create_New_Tab(string filePath)

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CompilerLab1"
         mc:Ignorable="d"
-        Title="GUI для ЯП" Height="450" Width="900"
+        Title="Компилятор" Height="450" Width="900"
         Closing="Window_Closing"
         AllowDrop="True" Drop="File_Drop">
 
@@ -36,16 +36,16 @@
                 <MenuItem Header="Выделить все" Click="SelectAll_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="Текст">
-                <MenuItem Header="Постановка задачи"></MenuItem>
-                <MenuItem Header="Грамматика"></MenuItem>
-                <MenuItem Header="Классификация грамматики"></MenuItem>
-                <MenuItem Header="Метод анализа"></MenuItem>
-                <MenuItem Header="Диагностика и нейтрализация ошибок"></MenuItem>
-                <MenuItem Header="Тестовый пример"></MenuItem>
-                <MenuItem Header="Список литературы"></MenuItem>
-                <MenuItem Header="Исходный код программы"></MenuItem>
+                <MenuItem Header="Постановка задачи" Click="Task_Click"></MenuItem>
+                <MenuItem Header="Грамматика" Click="Grammar_Click"></MenuItem>
+                <MenuItem Header="Классификация грамматики" Click="Classification_Click"></MenuItem>
+                <MenuItem Header="Метод анализа" Click="Analysis_Click"></MenuItem>
+                <MenuItem Header="Диагностика и нейтрализация ошибок" Click="Irons_Click"></MenuItem>
+                <MenuItem Header="Тестовый пример" Click="Examples_Click"></MenuItem>
+                <MenuItem Header="Список литературы" Click="Literature_Click"></MenuItem>
+                <MenuItem Header="Исходный код программы" Click="Source_Click"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Пуск"></MenuItem>
+            <MenuItem Header="Пуск" Click ="Run_Click"></MenuItem>
             <MenuItem Header="Справка">
                 <MenuItem Header="Вызов справки" Click="Help_Click"></MenuItem>
                 <MenuItem Header="О программе" Click="About_Click"></MenuItem>
@@ -101,7 +101,7 @@
             </Button>
             <Button x:Name ="RunButton" Click="Run_Click" ToolTip="RUN">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="Images/pasteButton.png" Width="30" Height="30"></Image>
+                    <Image Source="Images/runButton.png" Width="30" Height="30"></Image>
                 </StackPanel>
             </Button>
         </ToolBar>

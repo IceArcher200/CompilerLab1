@@ -14,6 +14,7 @@
     <None Remove="Images\openButton.png" />
     <None Remove="Images\pasteButton.png" />
     <None Remove="Images\redoButton.png" />
+    <None Remove="Images\runButton.png" />
     <None Remove="Images\saveButton.png" />
     <None Remove="Images\undoButton.png" />
   </ItemGroup>
@@ -25,6 +26,7 @@
     <Resource Include="Images\openButton.png" />
     <Resource Include="Images\pasteButton.png" />
     <Resource Include="Images\redoButton.png" />
+    <Resource Include="Images\runButton.png" />
     <Resource Include="Images\saveButton.png" />
     <Resource Include="Images\undoButton.png" />
   </ItemGroup>

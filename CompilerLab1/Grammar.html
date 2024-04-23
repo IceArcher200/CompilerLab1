@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" >
+<head>
+    <title>Грамматика</title>
+</head>
+<body>
+    <h1>
+        Грамматика
+    </h1>
+    <p>
+        Определим грамматику для объявления структуры на языке Go G[‹DEF›] в нотации Хомского с продукциями P:
+    </p>
+    <p>
+        1) &#60;DEF>\\ → "let" &#60;LET><br />
+        2) &#60;LET> → "letter" &#60;IDENTIFIER><br />
+        3) &#60;IDENTIFIER> → ("letter"| "digit") &#60;IDENTIFIER><br />
+        4) &#60;IDENTIFIER> → "=" &#60;ASSIGNMENT><br />
+        5) &#60;ASSIGNMENT> → "{" &#60;OPEN><br />
+        6) &#60;OPEN>→ ‘ " ’ &#60;STRING><br />
+        7) &#60;STRING> → "letter" &#60;STRINGREM><br />
+        8) &#60;STRINGREM> → ("letter" | "_" | "digit") &#60;STRINGREM><br />
+        9) &#60;STRINGREM> → ‘ " ’ &#60;ENDSTRING><br />
+        10) &#60;ENDSTRING > → ":" &#60;COLON><br />
+        11) &#60;COLON > → "digit" &#60;NUMBER><br />
+        12) &#60;COLON > → ‘ " ’ &#60;STRING2><br />
+        13) &#60;STRING2> → "letter" &#60;STRINGREM2><br />
+        14) &#60;STRINGREM2> → ("letter" | "_" | "digit") &#60;STRINGREM2><br />
+        15) &#60;STRINGREM2> → ‘ " ’ &#60;ENDSTRING2><br />
+        16) &#60;NUMBER> → "digit" &#60;DIGIT><br />
+        17) &#60;ENDSTRING2> → "," &#60;OPEN><br />
+        18) &#60;ENDSTRING2> → "}" &#60;END><br />
+        19) &#60;DIGIT> → "," &#60;OPEN><br />
+        20) &#60;DIGIT> → "}" &#60;END><br />
+        21) &#60;END> → ";" <br />
+    </p>
+    <p>
+        letter → ‘a’ | ‘b’ | … | ‘z’ | ‘A’ | ‘B’ | … | ‘Z’<br />
+        digit → ‘0’ | ‘1’ | … | ‘9’<br />
+        Следуя введенному формальному определению грамматики, представим G[‹DEF›] ее составляющими:<br />
+        Z = ‹DEF›;<br />
+        VT = {a, b, c, ..., z, A, B, C, ..., Z, _, {, }, \n, \t, let, "};<br />
+        VN = {
+        &#60;DEF>, &#60;LET>, &#60;IDENTIFIER >, &#60; ASSIGNMENT >, &#60;OPEN>, &#60; STRING >, &#60; STRINGREM >, &#60;ENDSTRING>, &#60;COLON>, &#60;NUMBER>, &#60;STRING2>, &#60;STRINGREM2>,&#60;ENDSTRING2>,&#60;DIGIT>,&#60;END>}.
+    </p>
+</body>
+</html>
