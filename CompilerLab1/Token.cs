@@ -6,13 +6,27 @@ using System.Threading.Tasks;
 
 namespace CompilerLab1
 {
+    enum TokenType
+    {
+        TOKEN_LEFT_PARANTHESES,
+        TOKEN_PLUS,
+        TOKEN_MINUS,
+        TOKEN_MULTIPLY,
+        TOKEN_DIVIDE,
+        TOKEN_RIGHT_PARANTHESES,
+        TOKEN_NUMBER,
+        TOKEN_WHITESPACE,
+        TOKEN_WHITESPACE_R,
+        TOKEN_WHITESPACE_N,
+        TOKEN_ERROR,
+    };
 
     internal class Token
     {
         public TokenPosition Position { get; set; }
-        public string Type { get; set; }
+        public TokenType Type { get; set; }
         public string Value { get; set; }
-        public Token(string type, string value, TokenPosition position)
+        public Token(TokenType type, string value, TokenPosition position)
         {
             this.Type = type;
             this.Value = value;

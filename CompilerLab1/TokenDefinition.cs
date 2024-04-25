@@ -9,12 +9,12 @@ namespace CompilerLab1
 {
     internal class TokenDefinition
     {
-		public string Type { get; private set; }
+		public TokenType Type { get; private set; }
         public Regex Regex { get; private set; }
         public bool Ignore { get; private set; }
-        public TokenDefinition(string type, Regex regex)
+        public TokenDefinition(TokenType type, Regex regex)
             : this(type, regex, false){}
-        public TokenDefinition(string type, Regex regex, bool ignore)
+        public TokenDefinition(TokenType type, Regex regex, bool ignore)
         {
             this.Type = type;
             this.Regex = regex;

@@ -61,7 +61,7 @@ namespace CompilerLab1
                     s = "";
                     s += source[currentIndex];
                     length = 1;
-                    result.Add(new Token("ERROR", s, new TokenPosition(currentIndex, currentIndex + (length - 1), currentColumn)));
+                    result.Add(new Token(TokenType.TOKEN_ERROR, s, new TokenPosition(currentIndex, currentIndex + (length - 1), currentColumn)));
                 }
                 else
                 {

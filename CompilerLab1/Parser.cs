@@ -8,127 +8,263 @@ namespace CompilerLab1
 {
     enum States
     {
-        START,
-        LET,
-        ARR,
-        ASSIGNMENT,
-        OPEN,
-        STRING,
-        COLON,
-        STRING2,
-        END,
-        ERROR
-
+        None,
+        Left_Bracket,
+        Plus,
+        Minus,
+        Multiply,
+        Divide,
+        Right_Bracket,
+        Number,
+        ERROR,
+        Whitespace
     };
+
     internal class Parser
     {
         public States currentState;
+        States previousState;
+        int brackets = 0;
         public Parser()
         {
-            currentState = States.START;
+            currentState = States.None;
+        }
+        public States CurrentState { get { return currentState; } set { currentState = value; } }
+
+        public int Brackets { get { return brackets; } set { brackets = value; } }
+        public States PreviousState { get { return previousState; } set { previousState = value; } }
+
+        public States MatchToken(TokenType type, States state)
+        {
+            if (type == TokenType.TOKEN_WHITESPACE || type == TokenType.TOKEN_WHITESPACE_R || type == TokenType.TOKEN_WHITESPACE_N)
+            {
+                return States.Whitespace;
+            }
+
+
+
+            return States.ERROR;
         }
 
-        public string getToken(States state)
+        //public States ParseError(TokenType type)
+        //{
+        //    States temp = previousState;
+        //    currentState = previousState;
+        //    if (Parse(type) == States.ERROR)
+        //    {
+        //        currentState = States.ERROR;
+        //        previousState = temp;
+        //    }
+        //    return currentState;
+        //}
+        public States Parse(TokenType type)
         {
-            if (state == States.START)
-                return "let";
-            if (state == States.LET)
-                return "arr";
-            if (state == States.ARR)
-                return "=";
-            if (state == States.ASSIGNMENT)
-                return "{";
-            if (state == States.OPEN)
-                return "key";
-            if (state == States.STRING)
-                return ":";
-            if (state == States.COLON)
-                return "value";
-            if (state == States.STRING2)
-                return "}";
-            if (state == States.END)
-                return ";";
-            return "";
-        }
 
-        public States Parse(Token token, bool isStateChangeable)
-        {
-            string type = token.Type;
-            if (type == "SEPARATOR")
+
+            if (type == TokenType.TOKEN_WHITESPACE || type == TokenType.TOKEN_WHITESPACE_R || type == TokenType.TOKEN_WHITESPACE_N)
             {
-                return currentState;
+                return States.Whitespace;
             }
 
-            if (currentState == States.START && type == "KEYWORD")
+            //if (currentState != States.ERROR)
+            //{
+            //    previousState = currentState;
+            //}
+
+            if (currentState == States.None && type == TokenType.TOKEN_NUMBER)
             {
-                if (isStateChangeable)
-                    currentState = States.LET;
-                return States.LET;
+                currentState = States.Number;
+                return States.Number;
             }
 
-            if (currentState == States.LET && type == "IDENTIFIER")
+            if (currentState == States.None && type == TokenType.TOKEN_LEFT_PARANTHESES)
             {
-                if (isStateChangeable)
-                    currentState = States.ARR;
-                return States.ARR;
-
+                brackets++;
+                currentState = States.Left_Bracket;
+                return States.Left_Bracket;
+            }
+            if (currentState == States.Left_Bracket && type == TokenType.TOKEN_LEFT_PARANTHESES)
+            {
+                brackets++;
+                currentState = States.Left_Bracket;
+                return States.Left_Bracket;
             }
 
-            if (currentState == States.ARR && type == "ASSIGNMENT")
+            if (currentState == States.None && type == TokenType.TOKEN_MINUS)
             {
-                if (isStateChangeable)
-                    currentState = States.ASSIGNMENT;
-                return States.ASSIGNMENT;
+                currentState = States.Minus;
+                return States.Minus;
             }
 
-            if (currentState == States.ASSIGNMENT && type == "OPEN_BRACE")
+            if (currentState == States.Number && type == TokenType.TOKEN_PLUS)
             {
-                if (isStateChangeable)
-                    currentState = States.OPEN;
-                return States.OPEN;
+                currentState = States.Plus;
+                return States.Plus;
             }
 
-            if (currentState == States.OPEN && type == "LINE")
+            if (currentState == States.Number && type == TokenType.TOKEN_MINUS)
             {
-                if (isStateChangeable)
-                    currentState = States.STRING;
-                return States.STRING;
+                currentState = States.Minus;
+                return States.Minus;
             }
 
-            if (currentState == States.STRING && type == "COLON")
+            if (currentState == States.Number && type == TokenType.TOKEN_MULTIPLY)
             {
-                if (isStateChangeable)
-                    currentState = States.COLON;
-                return States.COLON;
+                currentState = States.Multiply;
+                return States.Multiply;
             }
 
-            if (currentState == States.COLON && (type == "COMPLEX_NUMBER" || type == "NEGATIVE_NUMBER" || type == "NUMBER" || type == "LINE"))
+            if (currentState == States.Number && type == TokenType.TOKEN_DIVIDE)
             {
-                if (isStateChangeable)
-                    currentState = States.STRING2;
-                return States.STRING2;
+                currentState = States.Divide;
+                return States.Divide;
             }
 
-            if (currentState == States.STRING2 && type == "COMMA")
+            if (currentState == States.Number && type == TokenType.TOKEN_RIGHT_PARANTHESES)
             {
-                if (isStateChangeable)
-                    currentState = States.OPEN;
-                return States.OPEN;
+                if (brackets > 0)
+                {
+                    brackets--;
+                    currentState = States.Right_Bracket;
+                    return States.Right_Bracket;
+                }
+                else
+                {
+                    currentState = States.ERROR;
+                    return States.ERROR;
+                }
             }
 
-            if (currentState == States.STRING2 && type == "CLOSE_BRACE")
+            if (currentState == States.Left_Bracket && type == TokenType.TOKEN_MINUS)
             {
-                if (isStateChangeable)
-                    currentState = States.END;
-                    return States.END;
+                currentState = States.Minus;
+                return States.Minus;
             }
 
-            if (currentState == States.END && type == "END_MASSIVE")
+            if (currentState == States.Left_Bracket && type == TokenType.TOKEN_NUMBER)
             {
-                    if (isStateChangeable)
-                        currentState = States.START;
-                return States.START;
+                currentState = States.Number;
+                return States.Number;
             }
+
+            if (currentState == States.Plus && type == TokenType.TOKEN_MINUS)
+            {
+                currentState = States.Minus;
+                return States.Minus;
+            }
+
+            if (currentState == States.Plus && type == TokenType.TOKEN_NUMBER)
+            {
+                currentState = States.Number;
+                return States.Number;
+            }
+
+            if (currentState == States.Plus && type == TokenType.TOKEN_LEFT_PARANTHESES)
+            {
+                brackets++;
+                currentState = States.Left_Bracket;
+                return States.Left_Bracket;
+            }
+
+            if (currentState == States.Minus && type == TokenType.TOKEN_MINUS)
+            {
+                currentState = States.Minus;
+                return States.Minus;
+            }
+
+            if (currentState == States.Minus && type == TokenType.TOKEN_NUMBER)
+            {
+                currentState = States.Number;
+                return States.Number;
+            }
+
+
+            if (currentState == States.Minus && type == TokenType.TOKEN_LEFT_PARANTHESES)
+            {
+                brackets++;
+                currentState = States.Left_Bracket;
+                return States.Left_Bracket;
+            }
+
+            if (currentState == States.Multiply && type == TokenType.TOKEN_MINUS)
+            {
+                currentState = States.Minus;
+                return States.Minus;
+            }
+
+            if (currentState == States.Multiply && type == TokenType.TOKEN_NUMBER)
+            {
+                currentState = States.Number;
+                return States.Number;
+            }
+
+            if (currentState == States.Multiply && type == TokenType.TOKEN_LEFT_PARANTHESES)
+            {
+                brackets++;
+                currentState = States.Left_Bracket;
+                return States.Left_Bracket;
+            }
+
+            if (currentState == States.Divide && type == TokenType.TOKEN_MINUS)
+            {
+                currentState = States.Minus;
+                return States.Minus;
+            }
+
+            if (currentState == States.Divide && type == TokenType.TOKEN_NUMBER)
+            {
+                currentState = States.Number;
+                return States.Number;
+            }
+
+            if (currentState == States.Divide && type == TokenType.TOKEN_LEFT_PARANTHESES)
+            {
+                brackets++;
+                currentState = States.Left_Bracket;
+                return States.Left_Bracket;
+            }
+
+            if (currentState == States.Right_Bracket && type == TokenType.TOKEN_MINUS)
+            {
+                currentState = States.Minus;
+                return States.Minus;
+            }
+
+            if (currentState == States.Right_Bracket && type == TokenType.TOKEN_PLUS)
+            {
+                currentState = States.Plus;
+                return States.Plus;
+            }
+
+            if (currentState == States.Right_Bracket && type == TokenType.TOKEN_MULTIPLY)
+            {
+                currentState = States.Multiply;
+                return States.Multiply;
+            }
+
+            if (currentState == States.Right_Bracket && type == TokenType.TOKEN_DIVIDE)
+            {
+                currentState = States.Divide;
+                return States.Divide;
+            }
+
+            if (currentState == States.Right_Bracket && type == TokenType.TOKEN_RIGHT_PARANTHESES)
+            {
+                if (brackets > 0)
+                {
+                    brackets--;
+                    currentState = States.Right_Bracket;
+                    return States.Right_Bracket;
+                }
+                else
+                {
+                    currentState = States.ERROR;
+                    return States.ERROR;
+                }
+            }
+
+
+            currentState = States.ERROR;
             return States.ERROR;
         }
     }

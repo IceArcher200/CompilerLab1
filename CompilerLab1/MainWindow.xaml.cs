@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.IO;
 using System.IO.Enumeration;
 using System.Linq;
@@ -160,7 +161,7 @@ namespace CompilerLab1
         private void Help_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Help.html")
+            p.StartInfo = new ProcessStartInfo(Environment.CurrentDirectory + "\\Help.html")
             {
                 UseShellExecute = true
             };
@@ -170,7 +171,7 @@ namespace CompilerLab1
         private void About_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\About.html")
+            p.StartInfo = new ProcessStartInfo(Environment.CurrentDirectory + "\\About.html")
             {
                 UseShellExecute = true
             };
@@ -181,7 +182,7 @@ namespace CompilerLab1
         private void Classification_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Classification.html")
+            p.StartInfo = new ProcessStartInfo(Environment.CurrentDirectory + "\\Classification.html")
             {
                 UseShellExecute = true
             };
@@ -192,7 +193,7 @@ namespace CompilerLab1
         private void Grammar_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Grammar.html")
+            p.StartInfo = new ProcessStartInfo(Environment.CurrentDirectory + "\\Grammar.html")
             {
                 UseShellExecute = true
             };
@@ -203,7 +204,7 @@ namespace CompilerLab1
         private void Literature_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\LiteratureList.html")
+            p.StartInfo = new ProcessStartInfo(Environment.CurrentDirectory + "\\LiteratureList.html")
             {
                 UseShellExecute = true
             };
@@ -214,7 +215,7 @@ namespace CompilerLab1
         private void Irons_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Irons.html")
+            p.StartInfo = new ProcessStartInfo(Environment.CurrentDirectory + "\\Irons.html")
             {
                 UseShellExecute = true
             };
@@ -225,7 +226,7 @@ namespace CompilerLab1
         private void Analysis_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Analysis.html")
+            p.StartInfo = new ProcessStartInfo(Environment.CurrentDirectory + "\\Analysis.html")
             {
                 UseShellExecute = true
             };
@@ -235,7 +236,7 @@ namespace CompilerLab1
         private void Task_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Task.html")
+            p.StartInfo = new ProcessStartInfo(Environment.CurrentDirectory + "\\Task.html")
             {
                 UseShellExecute = true
             };
@@ -245,7 +246,7 @@ namespace CompilerLab1
         private void Examples_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Examples.html")
+            p.StartInfo = new ProcessStartInfo(Environment.CurrentDirectory + "\\Examples.html")
             {
                 UseShellExecute = true
             };
@@ -293,136 +294,136 @@ namespace CompilerLab1
             }
         }
 
+        string lexText(string text)
+        {
+
+            StringBuilder finalTextString = new StringBuilder();
+            Parser parser = new Parser();
+            List<Error> errors = FindErrors(text, finalTextString, ref parser);
+
+            if (errors.Count > 0)
+            {
+                for (int i = 0; i < errors.Count; i++)
+                {
+                    finalTextString.Append("Ошибка: " + errors[i].Token + " - " + errors[i].Text + " - " + " position" +
+                            " [" + errors[i].Start_pos + "," + errors[i].End_pos + "]" + " line: " + errors[i].Current_line + "\n");
+                }
+            }
+            else if (parser.currentState != States.Number && parser.currentState != States.Right_Bracket)
+            {
+                return "Не хватает числа или скобки";
+            }
+            else if (parser.Brackets != 0)
+            {
+                return "Не хватает закрывающей скобки";
+            }
+            else
+            {
+                return "Ошибок нет";
+            }
+            return finalTextString.ToString();
+        }
+
+        List<Error> FindErrors(string text, StringBuilder finalText, ref Parser parser)
+        {
+            string temp = string.Empty;
+            int current_line = 0;
+            int start_pos = 0;
+            int end_pos = 0;
+            Token currentToken = lexer(text[0].ToString());
+            Token tempToken;
+
+            List<Error> errors = new List<Error>();
+            States tempState = States.None;
+            for (int i = 0; i < text.Length; i++)
+            {
+                tempToken = lexer(text[i].ToString());
+                if (currentToken.Type == TokenType.TOKEN_NUMBER && tempToken.Type == TokenType.TOKEN_ERROR)
+                {
+                    tempToken = currentToken;
+                }
+                if (tempToken.Type != currentToken.Type || tempToken.Type == TokenType.TOKEN_WHITESPACE
+                    || tempToken.Type == TokenType.TOKEN_RIGHT_PARANTHESES || tempToken.Type == TokenType.TOKEN_LEFT_PARANTHESES && temp != string.Empty)
+                {
+                    currentToken = lexer(temp);
+                    end_pos--;
+
+                    tempState = parser.Parse(currentToken.Type);
+                    if (tempState == States.ERROR)
+                    {
+                        errors.Add(new Error(start_pos, end_pos, temp, currentToken.Type, current_line));
+                    }
+
+                    if (temp == "\n")
+                    {
+                        current_line++;
+                        start_pos = 0;
+                        end_pos = 0;
+                        temp = string.Empty;
+                        currentToken = tempToken;
+                    }
+                    else
+                    {
+                        end_pos++;
+                        start_pos = end_pos;
+                        temp = string.Empty;
+                        currentToken = tempToken;
+                    }
+                }
+                //current_error = false;
+                temp += text[i];
+                end_pos++;
+            }
+
+            currentToken = lexer(temp);
+            end_pos--;
+            tempState = parser.Parse(currentToken.Type);
+            if (tempState == States.ERROR)
+            {
+                if (tempState == States.ERROR)
+                {
+                    errors.Add(new Error(start_pos, end_pos, temp, currentToken.Type, current_line));
+                }
+            }
+
+            return errors;
+        }
+
+        Token lexer(string strToLex)
+        {
+            TokenPosition a = null;
+            switch (strToLex)
+            {
+                case "(": return new Token(TokenType.TOKEN_LEFT_PARANTHESES, "(", a);
+                case "+": return new Token(TokenType.TOKEN_PLUS, "+", a);
+                case "-": return new Token(TokenType.TOKEN_MINUS, "-", a);
+                case "*": return new Token(TokenType.TOKEN_MULTIPLY, "*", a);
+                case "/": return new Token(TokenType.TOKEN_DIVIDE, "/", a);
+                case ")": return new Token(TokenType.TOKEN_RIGHT_PARANTHESES, ")", a);
+                case " ": return new Token(TokenType.TOKEN_WHITESPACE, " ", a);
+                case "\r": return new Token(TokenType.TOKEN_WHITESPACE_R, " ", a);
+                case "\n": return new Token(TokenType.TOKEN_WHITESPACE_N, " ", a);
+                default: break;
+            }
+            Regex regex = new Regex("[1-9]([0-9])*");
+            Match match = regex.Match(strToLex);
+            string ident = match.Value;
+            if (ident != string.Empty)
+            {
+                return new Token(TokenType.TOKEN_NUMBER, "number", a);
+            }
+            return new Token(TokenType.TOKEN_ERROR, "error", a);
+        }
+
+
         private void Run_Click(object sender, RoutedEventArgs e)
         {
-            bool first = true;
-            var lexer = new Lexer();
-            lexer.AddDefinition(new TokenDefinition("KEYWORD", new Regex(@"let", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("IDENTIFIER", new Regex(@"[a-z]+[a-z0-9_]*", RegexOptions.Compiled | RegexOptions.IgnoreCase)));
-            lexer.AddDefinition(new TokenDefinition("ASSIGNMENT", new Regex(@"=", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("OPEN_BRACE", new Regex(@"{", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("CLOSE_BRACE", new Regex(@"}", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("LINE", new Regex(@"""[^""\\]*(?:\\.[^""\\]*)*""", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("COMMA", new Regex(@",", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("COLON", new Regex(@":", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("COMPLEX_NUMBER", new Regex(@"\d+(\.\d+)", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("NEGATIVE_NUMBER", new Regex(@"-\d+", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("NUMBER", new Regex(@"\d+", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("END_MASSIVE", new Regex(@";", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("SEPARATOR", new Regex(@" ", RegexOptions.Compiled), true));
-            lexer.AddDefinition(new TokenDefinition("LINE_BREAK", new Regex(@"\r?\n", RegexOptions.Compiled), true));
-
             RichTextBox input = listTabs[tabs.SelectedIndex].InputBox;
             TextRange doc = new TextRange(input.Document.ContentStart, input.Document.ContentEnd);
-
-            List<Token> tokens = lexer.Tokenize(doc.Text);
-
-            var typeBinding = new Binding("Type")
-            {
-                Mode = BindingMode.Default,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            };
-            string resultString = "";
-            ResultBox.Clear();
-            Parser parser = new Parser();
-            for (int i = 0;i < tokens.Count;i++)
-            {
-                bool isContains = false;
-                bool flag = false;
-                for(int j = i; j < tokens.Count;j++)
-                {
-                    if (parser.Parse(tokens[j], false) != States.ERROR)
-                    {
-                        isContains = true;
-                    }
-                }
-                if (!isContains)
-                {
-                    flag = false;
-                    States tempState = parser.currentState;
-                    States temp2State;
-                    while(parser.currentState != States.ERROR && flag == false)
-                    {
-                        if (parser.Parse(tokens[i],false) != States.ERROR) // Найден символ продолжение
-                        {
-                            while(tempState != parser.currentState)
-                            {
-                                ResultBox.Text += "Ожидалось '" + parser.getToken(tempState) + "' перед " + tokens[i] + "\n";
-                                resultString += parser.getToken(tempState) + " ";
-                                tempState++;
-                            }
-                            resultString += tokens[i].Value + " ";
-                            parser.Parse(tokens[i], true);
-                            flag = true;
-                            if (i == tokens.Count - 1)
-                            {
-                                temp2State = parser.currentState;
-                                while ((temp2State != States.ERROR) && parser.currentState != States.START)
-                                {
-                                    ResultBox.Text += "Ожидалось '" + parser.getToken(temp2State) + "' после " + tokens[i] + "\n";
-                                    resultString += parser.getToken(temp2State) + " ";
-                                    temp2State++;
-                                }
-                                tempState = States.START;
-                            }
-                        }
-                        if (!flag) 
-                            parser.currentState++;
-                    }
-                    if (!flag)
-                    {
-                        parser.currentState = tempState;
-                        if (i == tokens.Count - 1)
-                        {
-                            if (parser.Parse(tokens[i], true) == States.ERROR)
-                                ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
-                            while ((parser.currentState != States.ERROR) && parser.currentState != States.START)
-                            {
-                                ResultBox.Text += "Ожидалось '" + parser.getToken(parser.currentState) + "' после " + tokens[i] + "\n";
-                                resultString += parser.getToken(parser.currentState) + " ";
-                                parser.currentState++;
-                            }
-                            parser.currentState = States.START;
-                        }
-                        else if (parser.Parse(tokens[i], false) == States.ERROR)
-                        {
-                            ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
-                        }
-                        else
-                        {
-                            resultString += tokens[i].Value + " ";
-                            parser.Parse(tokens[i], true);
-                        }
-                    }
-                }
-                else if (i == tokens.Count - 1)
-                {
-                    resultString += parser.getToken(parser.currentState) + " ";
-                    if (parser.Parse(tokens[i], true) == States.ERROR)
-                        ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
-                    while ((parser.currentState != States.ERROR) && parser.currentState != States.START)
-                    {
-                        ResultBox.Text += "Ожидалось '" + parser.getToken(parser.currentState) + "' после " + tokens[i] + "\n";
-                        resultString += parser.getToken(parser.currentState) + " ";
-                        parser.currentState++;
-                    }
-                    
-                    parser.currentState = States.START;
-                }
-                else if (parser.Parse(tokens[i], false) == States.ERROR)
-                {  
-                    ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
-                }
-                else
-                {
-                    resultString += tokens[i].Value + " ";
-                    parser.Parse(tokens[i], true);
-                }
-
-            }
-            if (ResultBox.Text == "")
-                ResultBox.Text += "Ошибок не обнаружено";
-            //ResultBox.Text += "\n Исправленная строка: \n" + resultString;
+            string result = lexText(doc.Text);
+            ResultBox.Text = result;
+            Mather rpn = new Mather(doc.Text);
+            if (result == "Ошибок нет") ResultBox.Text += "\n" + rpn.Calc();
         }
 
         private TextRange Create_New_Tab(string filePath)
