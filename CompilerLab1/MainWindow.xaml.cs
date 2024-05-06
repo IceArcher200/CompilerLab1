@@ -298,7 +298,7 @@ namespace CompilerLab1
             bool first = true;
             var lexer = new Lexer();
             lexer.AddDefinition(new TokenDefinition("KEYWORD", new Regex(@"let", RegexOptions.Compiled)));
-            lexer.AddDefinition(new TokenDefinition("IDENTIFIER", new Regex(@"[a-z]+[a-z0-9_]*", RegexOptions.Compiled | RegexOptions.IgnoreCase)));
+            lexer.AddDefinition(new TokenDefinition("IDENTIFIER", new Regex(@"[a-z]+[a-z0-9]*", RegexOptions.Compiled | RegexOptions.IgnoreCase)));
             lexer.AddDefinition(new TokenDefinition("ASSIGNMENT", new Regex(@"=", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("OPEN_BRACE", new Regex(@"{", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("CLOSE_BRACE", new Regex(@"}", RegexOptions.Compiled)));
