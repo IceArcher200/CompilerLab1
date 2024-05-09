@@ -199,6 +199,20 @@ namespace CompilerLab1
         {
             bool first = true;
             var lexer = new Lexer();
+            lexer.AddDefinition(new TokenDefinition("KEYWORD", new Regex(@"begin", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("KEYWORD2", new Regex(@"end", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("ASSIGNMENT", new Regex(@":=", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("SEMICOLON", new Regex(@";", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("PLUS", new Regex(@"[+]", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("MULTY", new Regex(@"[*]", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("OPEN_BRACE", new Regex(@"[(]", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("CLOSE_BRACE", new Regex(@"[)]", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("VAR", new Regex(@"[a-zA-Z]+[a-zA-Z0-9]*", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("NUM", new Regex(@"[0-9]+", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("COMPARE-OP", new Regex(@"==|<|<=|>|>=|!=", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("SEPARATOR", new Regex(@" ", RegexOptions.Compiled), true));
+            lexer.AddDefinition(new TokenDefinition("LINE_BREAK", new Regex(@"\r?\n", RegexOptions.Compiled), true));
+            /*
             lexer.AddDefinition(new TokenDefinition("KEYWORD", new Regex(@"let", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("IDENTIFIER", new Regex(@"[a-z]+[a-z0-9_]*", RegexOptions.Compiled | RegexOptions.IgnoreCase)));
             lexer.AddDefinition(new TokenDefinition("ASSIGNMENT", new Regex(@"=", RegexOptions.Compiled)));
@@ -213,7 +227,7 @@ namespace CompilerLab1
             lexer.AddDefinition(new TokenDefinition("END_MASSIVE", new Regex(@";", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("SEPARATOR", new Regex(@" ", RegexOptions.Compiled), true));
             lexer.AddDefinition(new TokenDefinition("LINE_BREAK", new Regex(@"\r?\n", RegexOptions.Compiled), true));
-
+            */
             RichTextBox input = listTabs[tabs.SelectedIndex].InputBox;
             TextRange doc = new TextRange(input.Document.ContentStart, input.Document.ContentEnd);
 
@@ -227,104 +241,9 @@ namespace CompilerLab1
             string resultString = "";
             ResultBox.Clear();
             Parser parser = new Parser();
-            for (int i = 0;i < tokens.Count;i++)
-            {
-                bool isContains = false;
-                bool flag = false;
-                for(int j = i; j < tokens.Count;j++)
-                {
-                    if (parser.Parse(tokens[j], false) != States.ERROR)
-                    {
-                        isContains = true;
-                    }
-                }
-                if (!isContains)
-                {
-                    flag = false;
-                    States tempState = parser.currentState;
-                    States temp2State;
-                    while(parser.currentState != States.ERROR && flag == false)
-                    {
-                        if (parser.Parse(tokens[i],false) != States.ERROR) // Найден символ продолжение
-                        {
-                            while(tempState != parser.currentState)
-                            {
-                                ResultBox.Text += "Ожидалось '" + parser.getToken(tempState) + "' перед " + tokens[i] + "\n";
-                                resultString += parser.getToken(tempState) + " ";
-                                tempState++;
-                            }
-                            resultString += tokens[i].Value + " ";
-                            parser.Parse(tokens[i], true);
-                            flag = true;
-                            if (i == tokens.Count - 1)
-                            {
-                                temp2State = parser.currentState;
-                                while ((temp2State != States.ERROR) && parser.currentState != States.START)
-                                {
-                                    ResultBox.Text += "Ожидалось '" + parser.getToken(temp2State) + "' после " + tokens[i] + "\n";
-                                    resultString += parser.getToken(temp2State) + " ";
-                                    temp2State++;
-                                }
-                                tempState = States.START;
-                            }
-                        }
-                        if (!flag) 
-                            parser.currentState++;
-                    }
-                    if (!flag)
-                    {
-                        parser.currentState = tempState;
-                        if (i == tokens.Count - 1)
-                        {
-                            if (parser.Parse(tokens[i], true) == States.ERROR)
-                                ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
-                            while ((parser.currentState != States.ERROR) && parser.currentState != States.START)
-                            {
-                                ResultBox.Text += "Ожидалось '" + parser.getToken(parser.currentState) + "' после " + tokens[i] + "\n";
-                                resultString += parser.getToken(parser.currentState) + " ";
-                                parser.currentState++;
-                            }
-                            parser.currentState = States.START;
-                        }
-                        else if (parser.Parse(tokens[i], false) == States.ERROR)
-                        {
-                            ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
-                        }
-                        else
-                        {
-                            resultString += tokens[i].Value + " ";
-                            parser.Parse(tokens[i], true);
-                        }
-                    }
-                }
-                else if (i == tokens.Count - 1)
-                {
-                    resultString += parser.getToken(parser.currentState) + " ";
-                    if (parser.Parse(tokens[i], true) == States.ERROR)
-                        ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
-                    while ((parser.currentState != States.ERROR) && parser.currentState != States.START)
-                    {
-                        ResultBox.Text += "Ожидалось '" + parser.getToken(parser.currentState) + "' после " + tokens[i] + "\n";
-                        resultString += parser.getToken(parser.currentState) + " ";
-                        parser.currentState++;
-                    }
-                    
-                    parser.currentState = States.START;
-                }
-                else if (parser.Parse(tokens[i], false) == States.ERROR)
-                {  
-                    ResultBox.Text += "Ошибка " + tokens[i].ToString() + "\n";
-                }
-                else
-                {
-                    resultString += tokens[i].Value + " ";
-                    parser.Parse(tokens[i], true);
-                }
-
-            }
-            if (ResultBox.Text == "")
-                ResultBox.Text += "No Errors";
-            ResultBox.Text += "\n Исправленная строка: \n" + resultString;
+            resultString = parser.Parse(tokens);
+            
+            ResultBox.Text += resultString;
         }
 
         private TextRange Create_New_Tab(string filePath)
