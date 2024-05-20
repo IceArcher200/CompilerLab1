@@ -105,8 +105,8 @@
                 </StackPanel>
             </Button>
         </ToolBar>
-        <TabControl x:Name="tabs" Grid.Row="2" SelectedItem="TabControl_SelectedItem"></TabControl>
-        <TextBox x:Name="ResultBox" Grid.Row="3"></TextBox>
+        <TabControl x:Name="tabs" PreviewMouseWheel="PreviewMouseWheel" Grid.Row="2" SelectedItem="TabControl_SelectedItem" ></TabControl>
+        <TextBox x:Name="ResultBox" PreviewMouseWheel="PreviewMouseWheel2" Grid.Row="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"></TextBox>
         <GridSplitter Grid.Row="2" Height="1" Background="Gray" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" ></GridSplitter>
 
     </Grid>

@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Enumeration;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Printing;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -60,7 +62,6 @@ namespace CompilerLab1
                     doc.Load(fs, DataFormats.Xaml);
                 listTabs[tabs.SelectedIndex].TextChanged = false;
                 currentFilePath = ofd.FileName;
-                MessageBox.Show(tabs.Items.Count.ToString());
             }
         }
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -160,7 +161,8 @@ namespace CompilerLab1
         private void Help_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Help.html")
+            //p.StartInfo = new ProcessStartInfo(@"..\..\..\Help.html")
+            p.StartInfo = new ProcessStartInfo(@"Help.html")
             {
                 UseShellExecute = true
             };
@@ -170,7 +172,7 @@ namespace CompilerLab1
         private void About_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\About.html")
+            p.StartInfo = new ProcessStartInfo(@"About.html")
             {
                 UseShellExecute = true
             };
@@ -181,7 +183,7 @@ namespace CompilerLab1
         private void Classification_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Classification.html")
+            p.StartInfo = new ProcessStartInfo(@"Classification.html")
             {
                 UseShellExecute = true
             };
@@ -192,7 +194,7 @@ namespace CompilerLab1
         private void Grammar_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Grammar.html")
+            p.StartInfo = new ProcessStartInfo(@"Grammar.html")
             {
                 UseShellExecute = true
             };
@@ -203,7 +205,7 @@ namespace CompilerLab1
         private void Literature_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\LiteratureList.html")
+            p.StartInfo = new ProcessStartInfo(@"LiteratureList.html")
             {
                 UseShellExecute = true
             };
@@ -214,7 +216,7 @@ namespace CompilerLab1
         private void Irons_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Irons.html")
+            p.StartInfo = new ProcessStartInfo(@"Irons.html")
             {
                 UseShellExecute = true
             };
@@ -225,7 +227,7 @@ namespace CompilerLab1
         private void Analysis_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Analysis.html")
+            p.StartInfo = new ProcessStartInfo(@"Analysis.html")
             {
                 UseShellExecute = true
             };
@@ -235,7 +237,7 @@ namespace CompilerLab1
         private void Task_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Task.html")
+            p.StartInfo = new ProcessStartInfo(@"Task.html")
             {
                 UseShellExecute = true
             };
@@ -245,7 +247,7 @@ namespace CompilerLab1
         private void Examples_Click(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"..\..\..\Examples.html")
+            p.StartInfo = new ProcessStartInfo(@"Examples.html")
             {
                 UseShellExecute = true
             };
@@ -263,6 +265,29 @@ namespace CompilerLab1
             p.Close();
         }
 
+        private void PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            RichTextBox inputBox = listTabs[tabs.SelectedIndex].InputBox;
+            if (e.Delta > 0)
+            { 
+                inputBox.FontSize++;
+            }
+
+            else if (e.Delta < 0)
+                inputBox.FontSize--;
+        }
+
+        private void PreviewMouseWheel2(object sender, MouseWheelEventArgs e)
+        {
+            
+            if (e.Delta > 0)
+            {
+                ResultBox.FontSize++;
+            }
+
+            else if (e.Delta < 0)
+                ResultBox.FontSize--;
+        }
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
@@ -297,7 +322,7 @@ namespace CompilerLab1
         {
             bool first = true;
             var lexer = new Lexer();
-            lexer.AddDefinition(new TokenDefinition("KEYWORD", new Regex(@"let", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("KEYWORD", new Regex(@"let ", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("IDENTIFIER", new Regex(@"[a-z]+[a-z0-9]*", RegexOptions.Compiled | RegexOptions.IgnoreCase)));
             lexer.AddDefinition(new TokenDefinition("ASSIGNMENT", new Regex(@"=", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("OPEN_BRACE", new Regex(@"{", RegexOptions.Compiled)));
@@ -327,6 +352,15 @@ namespace CompilerLab1
             Parser parser = new Parser();
             for (int i = 0;i < tokens.Count;i++)
             {
+                if (i + 1 < tokens.Count)
+                {
+                    if (parser.currentState == States.START && tokens[i+1].Type == "IDENTIFIER" && tokens[i].Type != "KEYWORD")
+                    {
+                        ResultBox.Text += "Ожидалось let"   + " вместо " + tokens[i] + "\n";
+                        i++;
+                        parser.currentState++;
+                    }
+                }
                 bool isContains = false;
                 bool flag = false;
                 for(int j = i; j < tokens.Count;j++)
