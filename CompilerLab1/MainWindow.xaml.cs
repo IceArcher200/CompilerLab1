@@ -322,7 +322,7 @@ namespace CompilerLab1
         {
             bool first = true;
             var lexer = new Lexer();
-            lexer.AddDefinition(new TokenDefinition("KEYWORD", new Regex(@"let ", RegexOptions.Compiled)));
+            lexer.AddDefinition(new TokenDefinition("KEYWORD", new Regex(@"let", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("IDENTIFIER", new Regex(@"[a-z]+[a-z0-9]*", RegexOptions.Compiled | RegexOptions.IgnoreCase)));
             lexer.AddDefinition(new TokenDefinition("ASSIGNMENT", new Regex(@"=", RegexOptions.Compiled)));
             lexer.AddDefinition(new TokenDefinition("OPEN_BRACE", new Regex(@"{", RegexOptions.Compiled)));
@@ -354,11 +354,17 @@ namespace CompilerLab1
             {
                 if (i + 1 < tokens.Count)
                 {
-                    if (parser.currentState == States.START && tokens[i+1].Type == "IDENTIFIER" && tokens[i].Type != "KEYWORD")
+                    if (parser.currentState == States.START && tokens[i].Type != "KEYWORD")
                     {
-                        ResultBox.Text += "Ожидалось let"   + " вместо " + tokens[i] + "\n";
-                        i++;
-                        parser.currentState++;
+                        int j = 1;
+                        while (tokens[i + j].Type == "ERROR")
+                            j++;
+                        if (tokens[i + j].Type == "IDENTIFIER")
+                        {
+                            ResultBox.Text += "Ожидалось let" + " вместо " + tokens[i] + "\n";
+                            i++;
+                            parser.currentState++;
+                        }
                     }
                 }
                 bool isContains = false;
